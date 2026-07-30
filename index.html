@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parsa Tahmasebi</title>
+<meta name="description" content="Parsa Tahmasebi — AI and computer vision for brain imaging and healthcare. imec-Vision Lab, University of Antwerp; MSc Cognitive Science, University of Messina.">
+<style>
+  :root{
+    --bg:#fff; --fg:#1c1f26; --muted:#5c6474; --line:#e4e7ed;
+    --accent:#1f3864; --soft:#f2f4f8;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#14161a;--fg:#e6e8ec;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1b1f27}
+  }
+  :root[data-theme="dark"]{--bg:#14161a;--fg:#e6e8ec;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1b1f27}
+  :root[data-theme="light"]{--bg:#fff;--fg:#1c1f26;--muted:#5c6474;--line:#e4e7ed;--accent:#1f3864;--soft:#f2f4f8}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font:16px/1.68 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:700px;margin:0 auto;padding:0 24px}
+
+  header{padding:76px 0 34px}
+  h1{font-size:32px;line-height:1.2;margin:0 0 9px;letter-spacing:-.015em;font-weight:650}
+  .role{color:var(--muted);margin:0 0 24px;font-size:16px}
+  .role a{color:var(--accent)}
+  .links{display:flex;flex-wrap:wrap;gap:9px}
+  .links a{padding:5px 13px;border:1px solid var(--line);border-radius:999px;
+    color:var(--fg);text-decoration:none;font-size:13.5px}
+  .links a:hover{border-color:var(--accent);color:var(--accent)}
+
+  section{padding:34px 0;border-top:1px solid var(--line)}
+  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);
+     margin:0 0 18px;font-weight:600}
+  h3{font-size:16.5px;margin:0 0 6px;font-weight:600;line-height:1.42}
+  p{margin:0 0 15px}
+  a{color:var(--accent)}
+  .meta{color:var(--muted);font-size:14px;margin:0 0 9px}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
+  .tag{font-size:12px;padding:2px 9px;border-radius:4px;background:var(--soft);
+       color:var(--muted);border:1px solid var(--line)}
+  .item + .item{margin-top:26px;padding-top:26px;border-top:1px solid var(--line)}
+  footer{padding:26px 0 64px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line)}
+  @media (max-width:520px){h1{font-size:27px} header{padding-top:52px}}
+</style>
+</head>
+<body>
+
+<header><div class="wrap">
+  <h1>Parsa Tahmasebi</h1>
+  <p class="role">
+    AI and computer vision researcher, working on brain imaging for neuroscience
+    and clinical decision-making<br>
+    <a href="https://visielab.uantwerpen.be/">imec-Vision Lab</a>, University of Antwerp
+    &nbsp;&middot;&nbsp; MSc Cognitive Science, University of Messina
+  </p>
+  <div class="links">
+    <a href="mailto:Parsa.Tahmasebi@student.uantwerpen.be">Email</a>
+    <a href="https://github.com/parsatahmasebi7">GitHub</a>
+  </div>
+</div></header>
+
+<section><div class="wrap">
+  <h2>Research</h2>
+  <p>
+    I work on whether machine-learning models built on brain MRI hold up when they meet
+    data from a different scanner, hospital or study &mdash; and on what to measure when
+    they do not.
+  </p>
+  <p>
+    My current project evaluates Alzheimer's disease classification across ADNI, OASIS-3
+    and AIBL, testing transfer in both directions. Two results came out of it. A
+    preprocessing mismatch between cohorts turned out to be able to manufacture findings
+    that look methodological: in our pipeline it simultaneously produced an apparent
+    benefit from feature harmonization and an apparent advantage for a pre-trained brain
+    foundation model, and correcting it removed both. Separately, harmonization does
+    reliably remove the site signal it targets &mdash; cross-cohort site decodability
+    falls from about 0.82 to 0.59 &mdash; while disease classification does not improve.
+    The metric normally used to declare harmonization successful can therefore diverge
+    from the objective it stands for.
+  </p>
+  <p>
+    More broadly I am interested in evaluation itself: confounds that survive
+    preprocessing, calibration under distribution shift, and the gap between a model that
+    scores well and a model that can be trusted somewhere new.
+  </p>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Work in progress</h2>
+  <div class="item">
+    <h3>A preprocessing mismatch can manufacture both a harmonization benefit and a
+        foundation-model advantage in cross-cohort Alzheimer's MRI</h3>
+    <p class="meta">Manuscript in preparation, 2026</p>
+    <p>
+      Zero-shot CN-vs-AD transfer across three cohorts in both directions, five seeds,
+      subject-clustered bootstrap intervals and paired DeLong tests. Reports the
+      preprocessing defect with a controlled before/after, a harmonization null replicated
+      on three held-out cohorts, and a protocol-matched test of a published
+      foundation-model generalization claim.
+    </p>
+    <div class="tags">
+      <span class="tag">cross-cohort generalization</span>
+      <span class="tag">harmonization</span>
+      <span class="tag">foundation models</span>
+      <span class="tag">3D CNN</span>
+      <span class="tag">calibration</span>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Methods I work with</h2>
+  <p>
+    3D convolutional encoders in PyTorch; ANTs affine registration to MNI and HD-BET skull
+    stripping; ComBat, DeepComBat and adversarial gradient-reversal harmonization;
+    leave-one-cohort-out designs; subject-clustered bootstrap and paired DeLong testing;
+    calibration by Brier score and precision&ndash;recall at low prevalence.
+  </p>
+  <p>
+    I also spend a lot of time on quality control &mdash; intensity and registration parity
+    between cohorts, per-volume outlier detection, and gates that state on every verdict
+    which axes they checked and which they did not. Most of what I have learned about
+    generalization came from that part rather than from the modelling.
+  </p>
+</div></section>
+
+<section><div class="wrap">
+  <h2>Contact</h2>
+  <p>
+    <a href="mailto:Parsa.Tahmasebi@student.uantwerpen.be">Parsa.Tahmasebi@student.uantwerpen.be</a>
+    &nbsp;&middot;&nbsp; University of Antwerp<br>
+    <a href="mailto:Parsa.Tahmasebi@studenti.unime.it">Parsa.Tahmasebi@studenti.unime.it</a>
+    &nbsp;&middot;&nbsp; University of Messina
+  </p>
+  <p>imec-Vision Lab, Department of Physics, University of Antwerp, Belgium</p>
+  <p class="meta">Looking for a PhD position in medical image analysis and computational neuroimaging.</p>
+</div></section>
+
+<footer><div class="wrap">Last updated July 2026.</div></footer>
+
+</body>
+</html>
