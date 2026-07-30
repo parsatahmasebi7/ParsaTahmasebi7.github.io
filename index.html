@@ -7,14 +7,17 @@
 <meta name="description" content="Parsa Tahmasebi — AI and computer vision for brain imaging and healthcare. imec-Vision Lab, University of Antwerp; MSc Cognitive Science, University of Messina.">
 <style>
   :root{
-    --bg:#fff; --fg:#1c1f26; --muted:#5c6474; --line:#e4e7ed;
-    --accent:#1f3864; --soft:#f2f4f8;
+    /* warm paper rather than pure white: white reads as unfinished on a page
+       that is mostly running text */
+    --bg:#faf8f4; --fg:#22252b; --muted:#6a7080; --line:#e6e1d8;
+    --accent:#1f4e9c; --soft:#f2efe8;
+    --c1:#0f8b8d; --c2:#28509b; --c3:#6b3fa0;
   }
   @media (prefers-color-scheme:dark){
-    :root{--bg:#14161a;--fg:#e6e8ec;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1b1f27}
+    :root{--bg:#15171b;--fg:#e7e9ed;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1c1f26;--c1:#3fc7bd;--c2:#7aa2e8;--c3:#b48ce0}
   }
-  :root[data-theme="dark"]{--bg:#14161a;--fg:#e6e8ec;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1b1f27}
-  :root[data-theme="light"]{--bg:#fff;--fg:#1c1f26;--muted:#5c6474;--line:#e4e7ed;--accent:#1f3864;--soft:#f2f4f8}
+  :root[data-theme="dark"]{--bg:#15171b;--fg:#e7e9ed;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1c1f26;--c1:#3fc7bd;--c2:#7aa2e8;--c3:#b48ce0}
+  :root[data-theme="light"]{--bg:#faf8f4;--fg:#22252b;--muted:#6a7080;--line:#e6e1d8;--accent:#1f4e9c;--soft:#f2efe8;--c1:#0f8b8d;--c2:#28509b;--c3:#6b3fa0}
 
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--fg);
@@ -22,7 +25,7 @@
     -webkit-font-smoothing:antialiased}
   .wrap{max-width:700px;margin:0 auto;padding:0 24px}
 
-  header{padding:76px 0 34px}
+  header{padding:52px 0 34px}
   h1{font-size:32px;line-height:1.2;margin:0 0 9px;letter-spacing:-.015em;font-weight:650}
   .role{color:var(--muted);margin:0 0 24px;font-size:16px}
   .role a{color:var(--accent)}
@@ -32,8 +35,8 @@
   .links a:hover{border-color:var(--accent);color:var(--accent)}
 
   section{padding:34px 0;border-top:1px solid var(--line)}
-  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);
-     margin:0 0 18px;font-weight:600}
+  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--c1);
+     margin:0 0 18px;font-weight:700}
   h3{font-size:16.5px;margin:0 0 6px;font-weight:600;line-height:1.42}
   p{margin:0 0 15px}
   a{color:var(--accent)}
@@ -41,12 +44,32 @@
   .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px}
   .tag{font-size:12px;padding:2px 9px;border-radius:4px;background:var(--soft);
        color:var(--muted);border:1px solid var(--line)}
+  .topbar{height:3px;width:100%;
+    background:linear-gradient(90deg,var(--c1),var(--c2) 52%,var(--c3))}
   .item + .item{margin-top:26px;padding-top:26px;border-top:1px solid var(--line)}
   footer{padding:26px 0 64px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line)}
   @media (max-width:520px){h1{font-size:27px} header{padding-top:52px}}
+
+  /* animated header banner */
+  .banner{position:relative;width:100%;height:250px;margin:0;overflow:hidden;
+          border-bottom:1px solid var(--line);
+          background:radial-gradient(ellipse 62% 92% at 50% 45%, var(--soft) 0%, var(--bg) 74%)}
+  .banner canvas{display:block;width:100%;height:100%}
+  .banner .cap{position:absolute;left:0;right:0;bottom:10px;text-align:center;
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);
+    opacity:.8;pointer-events:none}
+  @media (max-width:520px){.banner{height:180px}}
+  @media (prefers-reduced-motion:reduce){.banner .cap{display:none}}
 </style>
 </head>
 <body>
+
+<div class="topbar"></div>
+
+<div class="banner" aria-hidden="true">
+  <canvas id="brain"></canvas>
+  <div class="cap">structural MRI &middot; representation &middot; generalization</div>
+</div>
 
 <header><div class="wrap">
   <h1>Parsa Tahmasebi</h1>
@@ -141,5 +164,291 @@
 
 <footer><div class="wrap">Last updated July 2026.</div></footer>
 
+<script>
+/* Animated header: a brain rendered as a point network, with a scan line
+   sweeping across it the way an imaging sequence acquires slices.
+   No dependencies. Honours prefers-reduced-motion. */
+(function () {
+  var cv = document.getElementById('brain');
+  if (!cv || !cv.getContext) return;
+  var ctx = cv.getContext('2d');
+
+  var reduced = window.matchMedia &&
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var pts = [], edges = [], W = 0, H = 0, dpr = 1, t = 0, raf = null;
+  var bL = 0, bR = 0, bMy = 0, bs = 1;
+
+  var RAMP = null;
+  function hex2rgb(h) {
+    h = h.replace('#', '');
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+  function readRamp() {
+    var cs = getComputedStyle(document.documentElement);
+    function v(n, d){ var x = cs.getPropertyValue(n).trim(); return hex2rgb(x || d); }
+    RAMP = [v('--c1','#0f8b8d'), v('--c2','#28509b'), v('--c3','#6b3fa0')];
+  }
+  // colour by horizontal position: teal at the neuron, blue through the brain,
+  // violet at the recording trace
+  function ink(x, a) {
+    if (!RAMP) readRamp();
+    var u = W ? Math.min(Math.max(x / W, 0), 1) : 0.5;
+    var i = u < 0.5 ? 0 : 1, f = u < 0.5 ? u / 0.5 : (u - 0.5) / 0.5;
+    var A = RAMP[i], B = RAMP[i+1];
+    var r = Math.round(A[0]+(B[0]-A[0])*f),
+        g = Math.round(A[1]+(B[1]-A[1])*f),
+        b = Math.round(A[2]+(B[2]-A[2])*f);
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  }
+
+  // brain outline in lateral view, drawn in a 400x300 design space, facing left.
+  // The notch on the left is the Sylvian fissure separating frontal from
+  // temporal lobe -- without it the silhouette reads as a blob, not a brain.
+  function outline(g, s, ox, oy) {
+    var S = [
+      [[58,118],[56,86],[80,56],[122,44]],       // frontal, rising
+      [[122,44],[178,26],[258,32],[306,62]],     // vertex
+      [[306,62],[342,86],[357,120],[348,146]],   // parietal to occipital
+      [[348,146],[344,163],[330,171],[312,168]], // occipital tip
+      [[312,168],[332,183],[323,203],[296,206]], // cerebellum
+      [[296,206],[288,217],[268,227],[258,208]], // brainstem
+      [[258,208],[254,196],[259,188],[248,186]], // stem inner
+      [[248,186],[225,197],[194,205],[162,196]], // temporal underside
+      [[162,196],[137,190],[117,177],[116,161]], // temporal pole
+      [[116,161],[122,149],[140,143],[159,139]], // up into the fissure
+      [[159,139],[139,129],[100,123],[58,118]]   // Sylvian fissure
+    ];
+    function X(p){ return ox + p[0]*s; }
+    function Y(p){ return oy + p[1]*s; }
+    g.beginPath();
+    g.moveTo(X(S[0][0]), Y(S[0][0]));
+    for (var i=0;i<S.length;i++){
+      var c=S[i];
+      g.bezierCurveTo(X(c[1]),Y(c[1]),X(c[2]),Y(c[2]),X(c[3]),Y(c[3]));
+    }
+    g.closePath();
+  }
+
+  function build() {
+    var rect = cv.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = Math.max(rect.width, 1); H = Math.max(rect.height, 1);
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // fit the 400x300 design box into the canvas
+    // fit on the shape's true bounding box, not the 400x300 design box, so the
+    // brain fills the banner instead of floating in it
+    var s = Math.min(W / 470, H / 212);
+    var ox = W / 2 - 206 * s, oy = H / 2 - 126 * s;
+    bL = 56 * s + ox; bR = 357 * s + ox; bMy = 126 * s + oy; bs = s;
+
+    // sample the filled shape on an offscreen canvas to get point positions
+    var off = document.createElement('canvas');
+    off.width = Math.round(W); off.height = Math.round(H);
+    var og = off.getContext('2d');
+    outline(og, s, ox, oy);
+    og.fillStyle = '#000'; og.fill();
+    var data = og.getImageData(0, 0, off.width, off.height).data;
+
+    pts = [];
+    var step = W < 560 ? 12 : 10;
+    for (var y = 0; y < off.height; y += step) {
+      for (var x = 0; x < off.width; x += step) {
+        if (data[(y * off.width + x) * 4 + 3] > 128) {
+          var jx = (Math.random() - 0.5) * step * 0.75;
+          var jy = (Math.random() - 0.5) * step * 0.75;
+          pts.push({
+            hx: x + jx, hy: y + jy, x: x + jx, y: y + jy,
+            p: Math.random() * Math.PI * 2,
+            sp: 0.5 + Math.random() * 0.7,
+            r: 0.9 + Math.random() * 1.1
+          });
+        }
+      }
+    }
+
+    // precompute edges once: points only drift a little around home, so fixed
+    // topology looks right and keeps the per-frame cost linear
+    edges = [];
+    var lim = step * 1.65, lim2 = lim * lim, i, j, dx, dy, n = pts.length;
+    var cell = lim, grid = {};
+    for (i = 0; i < n; i++) {
+      var k = Math.floor(pts[i].hx / cell) + ',' + Math.floor(pts[i].hy / cell);
+      (grid[k] || (grid[k] = [])).push(i);
+    }
+    for (i = 0; i < n; i++) {
+      var cx = Math.floor(pts[i].hx / cell), cy = Math.floor(pts[i].hy / cell), deg = 0;
+      for (var gx = cx - 1; gx <= cx + 1 && deg < 3; gx++) {
+        for (var gy = cy - 1; gy <= cy + 1 && deg < 3; gy++) {
+          var b = grid[gx + ',' + gy]; if (!b) continue;
+          for (var q = 0; q < b.length && deg < 3; q++) {
+            j = b[q]; if (j <= i) continue;
+            dx = pts[i].hx - pts[j].hx; dy = pts[i].hy - pts[j].hy;
+            if (dx * dx + dy * dy < lim2) { edges.push([i, j]); deg++; }
+          }
+        }
+      }
+    }
+  }
+
+
+  // A neuron on the left with an action potential running down its axon, and an
+  // electrophysiology trace on the right. Both are skipped on narrow screens,
+  // where there is no room beside the brain.
+  function sidePieces() {
+    if (W < 900) return;
+
+    // ---- neuron ----
+    var nx = bL - 150 * bs, ny = bMy, r = 13 * bs;
+    if (nx > 70) {
+      var cN = ink(nx, 0.55);
+      ctx.strokeStyle = cN; ctx.fillStyle = cN; ctx.lineWidth = 1.2;
+      ctx.globalAlpha = 1;
+      var dend = [[-1,-1.5],[-1.35,-0.35],[-1.25,0.75],[-0.55,1.5],[-1.5,0.2]];
+      for (var i = 0; i < dend.length; i++) {
+        var ex = nx + dend[i][0] * 46 * bs, ey = ny + dend[i][1] * 34 * bs;
+        ctx.beginPath();
+        ctx.moveTo(nx + dend[i][0] * r * 0.9, ny + dend[i][1] * r * 0.7);
+        ctx.quadraticCurveTo((nx + ex) / 2, ny + dend[i][1] * 30 * bs, ex, ey);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex - 13 * bs, ey - 9 * bs);
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex - 11 * bs, ey + 10 * bs);
+        ctx.stroke();
+      }
+      var ax0 = nx + r, ax1 = bL - 12 * bs;             // axon toward the brain
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(ax0, ny); ctx.lineTo(ax1, ny); ctx.stroke();
+      ctx.fillStyle = ink(nx, 0.62);
+      ctx.beginPath(); ctx.arc(nx, ny, r, 0, 6.283); ctx.fill();
+
+      if (!reduced) {                                    // the travelling spike
+        var per = 2.4, ph = (t % per) / per;
+        var px = ax0 + (ax1 - ax0) * ph;
+        var gg = ctx.createRadialGradient(px, ny, 0, px, ny, 17 * bs);
+        gg.addColorStop(0, ink(px, 0.8)); gg.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.globalAlpha = 1; ctx.fillStyle = gg;
+        ctx.beginPath(); ctx.arc(px, ny, 17 * bs, 0, 6.283); ctx.fill();
+        ctx.fillStyle = ink(px, 1);
+        ctx.beginPath(); ctx.arc(px, ny, 3 * bs, 0, 6.283); ctx.fill();
+      }
+    }
+
+    // ---- electrophysiology trace ----
+    var x0 = bR + 44 * bs, x1 = W - 46, my = bMy, amp = 26 * bs;
+    if (x1 - x0 > 130) {
+      ctx.globalAlpha = 1; ctx.strokeStyle = ink((x0 + x1) / 2, 0.62); ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      for (var x = x0; x <= x1; x += 2) {
+        var u = (x - x0) * 0.045 + (reduced ? 0 : t * 2.3);
+        var v = Math.sin(u) * 0.22 + Math.sin(u * 0.47 + 1.1) * 0.16;
+        var k = u % 7.2;                                  // periodic spike burst
+        if (k < 1.5) {
+          var z = (k - 0.75) / 0.75;
+          v += Math.exp(-z * z * 9) * (z < 0 ? 1 : -0.45);
+        }
+        if (x === x0) ctx.moveTo(x, my - v * amp); else ctx.lineTo(x, my - v * amp);
+      }
+      ctx.stroke();
+      ctx.strokeStyle = ink((x0 + x1) / 2, 0.22); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0, my); ctx.lineTo(x1, my); ctx.stroke();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() {
+    var i, p, q, e;
+    ctx.clearRect(0, 0, W, H);
+
+    if (!reduced) {
+      for (i = 0; i < pts.length; i++) {
+        p = pts[i];
+        p.x = p.hx + Math.sin(t * p.sp + p.p) * 1.7;
+        p.y = p.hy + Math.cos(t * p.sp * 0.8 + p.p) * 1.7;
+      }
+    }
+
+    // scan line position, sweeping left to right across the shape
+    var span = W + 160;
+    var sxpos = reduced ? -999 : ((t * 62) % span) - 80;
+
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 1;
+    var NB = 10, bucket = [], bi;
+    for (bi = 0; bi < NB; bi++) bucket.push([]);
+    for (i = 0; i < edges.length; i++) {
+      e = edges[i]; p = pts[e[0]]; q = pts[e[1]];
+      bi = Math.min(NB - 1, Math.max(0, Math.floor(((p.x + q.x) / 2) / W * NB)));
+      bucket[bi].push(e);
+    }
+    for (bi = 0; bi < NB; bi++) {
+      if (!bucket[bi].length) continue;
+      ctx.strokeStyle = ink((bi + 0.5) / NB * W, 0.42);
+      ctx.beginPath();
+      for (i = 0; i < bucket[bi].length; i++) {
+        e = bucket[bi][i]; p = pts[e[0]]; q = pts[e[1]];
+        ctx.moveTo(p.x, p.y); ctx.lineTo(q.x, q.y);
+      }
+      ctx.stroke();
+    }
+
+    // points, brighter near the scan line
+    for (i = 0; i < pts.length; i++) {
+      p = pts[i];
+      var d = Math.abs(p.x - sxpos);
+      var lit = d < 40 ? (1 - d / 40) : 0;
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = ink(p.x, 0.62 + lit * 0.38);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r + lit * 1.5, 0, 6.283);
+      ctx.fill();
+    }
+
+    if (!reduced) {
+      // a thin line, not a slab: the wide gradient rendered as a grey smear
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = ink(sxpos, 0.62);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath();
+      ctx.moveTo(sxpos, 6);
+      ctx.lineTo(sxpos, H - 46);
+      ctx.stroke();
+      ctx.strokeStyle = ink(sxpos, 0.15);
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.moveTo(sxpos, 6);
+      ctx.lineTo(sxpos, H - 46);
+      ctx.stroke();
+    }
+    sidePieces();
+    ctx.globalAlpha = 1;
+  }
+
+  function loop() { t += 0.016; draw(); raf = requestAnimationFrame(loop); }
+
+  function start() {
+    build(); draw();
+    if (raf) cancelAnimationFrame(raf);
+    if (!reduced) raf = requestAnimationFrame(loop);
+  }
+
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt); RAMP = null; rt = setTimeout(start, 180);
+  });
+  // pause when the tab is hidden so it costs nothing in the background
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) { if (raf) { cancelAnimationFrame(raf); raf = null; } }
+    else if (!reduced && !raf) { raf = requestAnimationFrame(loop); }
+  });
+
+  start();
+})();
+</script>
 </body>
 </html>
