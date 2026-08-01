@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CV — Parsa Tahmasebi</title>
+<meta name="description" content="Curriculum vitae of Parsa Tahmasebi — computational neuroimaging and evaluation of medical AI. imec-Vision Lab, University of Antwerp; MSc Cognitive Science, University of Messina.">
+<link rel="canonical" href="https://parsatahmasebi7.github.io/cv.html">
+<style>
+  :root{
+    --bg:#faf8f4; --fg:#22252b; --muted:#6a7080; --line:#e6e1d8;
+    --accent:#1f4e9c; --soft:#f2efe8; --c1:#0f8b8d;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#15171b;--fg:#e7e9ed;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1c1f26;--c1:#3fc7bd}
+  }
+  :root[data-theme="dark"]{--bg:#15171b;--fg:#e7e9ed;--muted:#98a0af;--line:#282c34;--accent:#8fb0e8;--soft:#1c1f26;--c1:#3fc7bd}
+  :root[data-theme="light"]{--bg:#faf8f4;--fg:#22252b;--muted:#6a7080;--line:#e6e1d8;--accent:#1f4e9c;--soft:#f2efe8;--c1:#0f8b8d}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+    font:16px/1.68 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px}
+  a{color:var(--accent)}
+
+  .back{display:inline-block;margin:26px 0 0;font-size:13.5px;color:var(--muted);text-decoration:none}
+  .back:hover{color:var(--accent)}
+  header{padding:18px 0 30px}
+  h1{font-size:31px;line-height:1.2;margin:0 0 8px;letter-spacing:-.015em;font-weight:650}
+  .contact{color:var(--muted);margin:0 0 4px;font-size:14.5px}
+  .links{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+  .links a{padding:5px 13px;border:1px solid var(--line);border-radius:999px;
+    color:var(--fg);text-decoration:none;font-size:13.5px}
+  .links a:hover{border-color:var(--accent);color:var(--accent)}
+  .links a.solid{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+
+  section{padding:30px 0;border-top:1px solid var(--line)}
+  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:.11em;color:var(--c1);
+     margin:0 0 18px;font-weight:700}
+  h3{font-size:16.5px;margin:0 0 4px;font-weight:600;line-height:1.42}
+  p{margin:0 0 12px}
+
+  .entry{margin-bottom:26px}
+  .entry:last-child{margin-bottom:0}
+  .head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between}
+  .when{color:var(--muted);font-size:14px;white-space:nowrap}
+  .meta{color:var(--muted);font-size:14.5px;margin:0 0 10px}
+  .note{font-size:15px;margin:0 0 10px}
+  ul{margin:0;padding-left:19px}
+  li{margin-bottom:9px}
+  li:last-child{margin-bottom:0}
+
+  .skill{margin-bottom:12px}
+  .skill b{display:block;font-size:14px;letter-spacing:.01em;margin-bottom:2px}
+  .skill span{color:var(--fg)}
+
+  footer{padding:26px 0 46px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+
+  @media print{
+    :root{--bg:#fff;--fg:#111;--muted:#555;--line:#ccc;--accent:#1f4e9c;--c1:#1f4e9c}
+    .back,.links,footer{display:none}
+    body{font-size:10.5pt;line-height:1.42}
+    section{padding:14px 0;break-inside:avoid}
+    .entry{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<a class="back" href="./">← Parsa Tahmasebi</a>
+
+<header>
+  <h1>Curriculum vitae</h1>
+  <p class="contact">Antwerp, Belgium  ·  Parsa.Tahmasebi@student.uantwerpen.be  ·  (+39) 351 467 5117</p>
+  <p class="contact">Nationality: Iranian</p>
+  <div class="links">
+    <a class="solid" href="Parsa_Tahmasebi_CV.pdf">Download PDF</a>
+    <a href="https://github.com/parsatahmasebi7">GitHub</a>
+    <a href="https://www.linkedin.com/in/parsatahmasebi">LinkedIn</a>
+    <a href="https://parsatahmasebi7.github.io">Website</a>
+  </div>
+</header>
+
+<section>
+<h2>Research summary</h2>
+<p>MSc Cognitive Science student working in computational neuroimaging and the evaluation of medical AI. Research trainee at imec-Vision Lab, University of Antwerp (Prof. Jan Sijbers), on cross-cohort generalization in MRI-based Alzheimer's disease classification. My work centres on whether a model that scores well on one cohort can be trusted on another, and on the evaluation practices that decide the answer: preprocessing parity between cohorts, confounds that survive it, calibration under distribution shift, and quality-control gates that state their own coverage. Seeking a PhD in medical image analysis, neuroimaging AI or computational neuroscience.</p>
+</section>
+
+<section>
+<h2>Research experience</h2>
+<div class="entry">
+  <div class="head"><h3>Research Trainee — imec-Vision Lab, University of Antwerp</h3><span class="when">2026 – Present</span></div>
+  <p class="meta">Supervisor: Prof. Jan Sijbers  ·  8× A100 GPU cluster</p>
+  
+  <ul><li>Found and quantified a preprocessing parity defect between cohorts that had produced three separate misleading results at once — an apparent benefit from feature harmonization, an apparent advantage for a pre-trained brain foundation model, and depressed transfer. Both data versions were retained, so the before/after is a controlled contrast: zero-shot transfer rose from <strong>0.671 ± 0.089 to 0.833 ± 0.010</strong> and seed-to-seed variability fell 8.9-fold.</li><li>Showed that feature harmonization removes the signal it targets without improving the objective it stands for: across three leave-one-cohort-out folds (ADNI, OASIS-3, AIBL), DeepComBat cut cross-cohort site decodability from <strong>0.82 to 0.59</strong> while disease AUC moved by 0.001–0.012 and calibration worsened in every arm-versus-baseline comparison.</li><li>Ran an independent, protocol-matched test of a published brain foundation model's generalization claim (BrainIAC, Nat. Neurosci. 2026). With both encoders frozen behind the same linear probe, the foundation model <strong>trails a from-scratch 3D CNN by 0.078 and 0.087 AUC</strong> — the reverse of what the defective preprocessing had suggested.</li><li>Decomposed the residual gap against per-component controls rather than a common baseline, including a size-matched control that separates population matching from training-set size. Population shift does not survive its own control (−0.024 ± 0.027); the operational definition of "Alzheimer's disease" is the only component exceeding its seed spread (+0.031 ± 0.012).</li><li>Built the evaluation to be falsifiable: five seeds per configuration, both transfer directions, subject-clustered bootstrap intervals, paired DeLong tests, and AUPRC and calibration reported alongside AUC at 10% target prevalence. Validated the choice of resampling unit by Monte-Carlo simulation rather than assertion.</li><li>Wrote the cross-cohort quality-control battery the project depends on — intensity and registration parity, per-volume outlier detection, and gates that print what they checked and what they did not. Released as an open-source toolkit with synthetic demo data so it runs without access to clinical MRI.</li><li>Engineering: reproducible PyTorch pipeline, DICOM→NIfTI conversion, ANTs affine registration to MNI152, HD-BET skull stripping, multi-GPU sharded preprocessing, resumable training, and figures generated from run logs so they cannot drift from the numbers they report.</li><li>First-author manuscript in preparation, supervised by Prof. Jan Sijbers.</li></ul>
+</div>
+</section>
+
+<section>
+<h2>Software and research outputs</h2>
+<div class="entry">
+  <h3>prf-vision-benchmark — independent implementation and benchmark of the 2D-Gaussian population receptive field model</h3>
+  <p class="meta">MIT licensed  ·  archived with <a href="https://doi.org/10.5281/zenodo.21726011">DOI 10.5281/zenodo.21726011</a>  ·  <a href="https://github.com/parsatahmasebi7/prf-vision-benchmark">github.com/parsatahmasebi7/prf-vision-benchmark</a></p>
+  <ul><li>Implemented the Dumoulin &amp; Wandell (2008) pRF model from scratch in NumPy/SciPy and compared it against the published vistasoft solutions distributed with OpenNeuro ds003787 (NYU Retinotopy).</li><li>Position estimates agreed at <strong>r = 0.96</strong> (range 0.85–0.99) but size estimates at only <strong>r = 0.66</strong> (range 0.46–0.80), each computed across 2148–3113 V1 vertices within a hemisphere and averaged over 6 hemispheres from 3 subjects. Four controls — data quantity, hemisphere, HRF specification, HRF fitting — left the asymmetry unexplained; its direction is consistent with previously reported limits on pRF size reliability.</li><li>Built a vectorised prediction-bank fitter and verification scripts that check every documented claim resolves to the file or source it cites.</li></ul>
+</div>
+</section>
+
+<section>
+<h2>Education</h2>
+<div class="entry">
+  <div class="head"><h3>MSc Cognitive Science (LM-55) — University of Messina, Italy</h3><span class="when">2024 – 2026 (expected)</span></div>
+  <p class="meta">Grade average 28.28 / 30 (top band)  ·  EQF level 7</p>
+  <p class="note">Thesis: Cross-cohort generalization in MRI-based Alzheimer's disease classification (in progress, carried out at imec-Vision Lab, University of Antwerp).</p>
+  
+</div>
+<div class="entry">
+  <div class="head"><h3>BSc Psychology — Islamic Azad University, Iran</h3><span class="when">2020 – 2024</span></div>
+  <p class="meta">Final grade 17.33 / 20  ·  EQF level 6</p>
+  
+  
+</div>
+</section>
+
+<section>
+<h2>Technical skills</h2>
+<div class="skill"><b>Modelling / ML</b><span>PyTorch, MONAI, scikit-learn, 3D CNNs, foundation models (frozen feature extraction, linear probing), transfer evaluation, encoding models, nonlinear least-squares fitting and parameter estimation</span></div>
+<div class="skill"><b>Neuroimaging</b><span>structural MRI preprocessing, DICOM→NIfTI (dcm2niix), ANTs affine registration to MNI, HD-BET skull stripping, NiBabel, harmonization (ComBat, DeepComBat, adversarial gradient reversal); fMRI time-series and haemodynamic response function modelling, retinotopic mapping, surface (vertex-wise) data</span></div>
+<div class="skill"><b>Evaluation</b><span>subject-clustered bootstrap intervals, paired DeLong tests, calibration by Brier score, precision–recall at low prevalence, confound and scanner decodability, subject-wise splits, leakage-free design, Monte-Carlo validation of statistical choices, agreement between independent implementations</span></div>
+<div class="skill"><b>Computing</b><span>Python (NumPy, SciPy, pandas), vectorised numerical code, Git, Linux, CUDA, multi-GPU and HPC (A100 cluster), tmux-based long-running job management</span></div>
+</section>
+
+<section>
+<h2>Languages</h2>
+<p>English — C1 reading / B2 overall   ·   Italian — B1/B2   ·   Persian — native</p>
+</section>
+
+<footer>Generated from a single source shared with the PDF, so the two cannot disagree.</footer>
+
+</div>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Person",
+  "name":"Parsa Tahmasebi",
+  "url":"https://parsatahmasebi7.github.io/",
+  "email":"mailto:Parsa.Tahmasebi@student.uantwerpen.be",
+  "jobTitle":"Research Trainee, imec-Vision Lab",
+  "affiliation":[{"@type":"Organization","name":"University of Antwerp"},
+                 {"@type":"Organization","name":"University of Messina"}],
+  "sameAs":["https://github.com/parsatahmasebi7",
+            "https://www.linkedin.com/in/parsatahmasebi"]
+}
+</script>
+</body>
+</html>
